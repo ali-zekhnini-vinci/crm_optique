@@ -1,0 +1,32 @@
+POST http://localhost:5000/api/register
+Content-Type: application/json
+
+{
+  "username": "ali@student.vinci.be",
+  "password": "AZERTYaze12/",
+  "role": "Admin"
+}
+
+###
+POST http://localhost:5000/api/login
+Content-Type: application/json
+
+{
+    "username": "ali@student.vinci.be",
+    "password": "AZERTYaze12/"
+}
+
+###
+GET http://localhost:5000/api/stocks
+
+###
+POST http://localhost:5000/api/frames 
+Content-Type: application/json
+
+{
+    "brand": "RayBan",
+    "model": "P8734",
+    "price": "123",
+    "stock": "121234567",
+    "url": "https://img.edel-optics.be/eoProductsGlassesSunglasses/640/nobg/Porsche-Design-P8692-B.jpg"
+}
