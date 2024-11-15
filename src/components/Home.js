@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const Home = () => {
   const [frames, setFrames] = useState([]);
+  
 
   useEffect(() => {
     const fetchFrames = async () => {

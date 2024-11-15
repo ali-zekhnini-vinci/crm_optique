@@ -297,16 +297,18 @@ app.post('/api/sales', async (req, res) => {
     }
 });
 
-// Visualiser toutes les ventes
+// Visualiser la somme des ventes
 app.get('/api/sales', async (req, res) => {
     try {
-        const sales = await pool.query('SELECT * FROM sales');
-        res.json(sales.rows);
+        const sales = await pool.query('SELECT SUM(total) AS total FROM sales');
+        console.log(sales.rows.total_sales); // Ajoute cette ligne pour voir ce qui est renvoyé
+        res.json(sales.rows[0].total);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
+
 
 ////////////////////////////////// DEPENSES //////////////////////////////////
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
+// import { UserOutlined } from '@ant-design/icons';
 
 const navigation = [
   { name: 'Accueil', href: '/', current: true },
@@ -37,7 +38,7 @@ const Navbar = () => {
           }
         });
 
-        if (res.data.role === 'Admin') {
+        if (res.data.role.trim() === 'Admin') {
           setIsAdmin(true);
         }
       } catch (err) {
@@ -58,6 +59,7 @@ const Navbar = () => {
       });
       localStorage.removeItem('token'); // Supprimer le token du localStorage
       navigate('/login'); // Rediriger vers la page de connexion
+      window.location.reload();
     } catch (err) {
       console.error('Erreur lors de la déconnexion:', err.response ? err.response.data : err.message);
     }
@@ -81,11 +83,7 @@ const Navbar = () => {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -121,11 +119,9 @@ const Navbar = () => {
                     <div>
                       <MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
-                        />
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                          <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                        </svg>
                       </MenuButton>
                     </div>
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
@@ -140,23 +136,25 @@ const Navbar = () => {
                         )}
                       </MenuItem>
                       <MenuItem>
-                        {({ active }) => (
-                          <a
-                            href="#"
+                        {({ active }) => isAdmin && (
+                          <DisclosureButton
+                            as="a"
+                            href="/dashboard"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
-                            Settings
-                          </a>
+                            Dashboard
+                          </DisclosureButton>
                         )}
                       </MenuItem>
                       <MenuItem>
                         {({ active }) => (
-                          <button
-                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          <DisclosureButton
+                            as="a"
                             onClick={handleLogout}
+                            className={classNames(active ? 'bg-gray-100 cursor-pointer' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
-                            Sign out
-                          </button>
+                            Log Out
+                          </DisclosureButton>
                         )}
                       </MenuItem>
                     </MenuItems>
@@ -178,7 +176,6 @@ const Navbar = () => {
                       item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                       'block rounded-md px-3 py-2 text-base font-medium'
                     )}
-                    aria-current={item.current ? 'page' : undefined}
                   >
                     {item.name}
                   </DisclosureButton>

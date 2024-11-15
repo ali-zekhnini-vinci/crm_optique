@@ -30,10 +30,13 @@ const Login = () => {
       // Redirect based on role
       if (role === 'Admin') {
         navigate('/dashboard');
+        window.location.reload();
       } else if (role === 'Manager') {
         navigate('/frames');
+        window.location.reload();
       } else if (role === 'Employee') {
         navigate('/home');
+        window.location.reload();
       }
     } catch (err) {
       console.error('API error:', err.response ? err.response.data : err.message); // Log the error response
