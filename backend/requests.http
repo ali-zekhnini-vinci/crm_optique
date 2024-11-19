@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/sales
+GET http://localhost:5000/api/clients
 
 ###
 POST http://localhost:5000/api/frames 

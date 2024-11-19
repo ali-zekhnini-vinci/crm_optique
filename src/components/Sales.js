@@ -3,7 +3,7 @@ import axios from 'axios';
 import { TextField, Button, Container, Typography, List, ListItem, ListItemText } from '@mui/material';
 
 const Sales = () => {
-  const [sales, setSales] = useState([]);
+  const [firstSales, setSales] = useState([]);
   const [formData, setFormData] = useState({
     user_id: '',
     frame_id: '',
@@ -16,6 +16,7 @@ const Sales = () => {
   useEffect(() => {
     const fetchSales = async () => {
       const res = await axios.get('http://localhost:5000/api/sales');
+      console.log(res.data);
       setSales(res.data);
     };
     fetchSales();
@@ -27,7 +28,7 @@ const Sales = () => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/sales', formData);
-      setSales([...sales, res.data]);
+      setSales([...firstSales, res.data]);
     } catch (err) {
       console.error(err.response.data);
     }
@@ -83,8 +84,8 @@ const Sales = () => {
           Add Sale
         </Button>
       </form>
-      <List>
-        {sales.map(sale => (
+      {/* <List>
+        {firstSales.map(sale => (
           <ListItem key={sale.id}>
             <ListItemText
               primary={`User ID: ${sale.user_id} - Frame ID: ${sale.frame_id}`}
@@ -92,7 +93,7 @@ const Sales = () => {
             />
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Container>
   );
 };

@@ -6,12 +6,18 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { redirect } = require('react-router-dom');
+const cookieParser = require('cookie-parser');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', //  l'URL du frontend
+    credentials: true // Permet l'envoi des cookies
+  }));
 app.use(express.json());
+app.use(cookieParser());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -64,22 +70,28 @@ app.get('/api/users', async (req, res) => {
 
 
 const verifyTokenAndRole = (requiredRole) => (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.cookies.token; // Récupérer le token depuis le cookie
+    console.log('Token:', token);
+
     if (!token) {
-      return res.status(401).json({ message: 'Accès non autorisé' });
+      return res.status(401).json({ message: 'Accès non autorisé : aucun token fourni' });
     }
-  
+
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Decoded Token:', decoded);
+
       if (decoded.user.role !== requiredRole) {
         return res.status(403).json({ message: 'Accès réservé aux administrateurs' });
       }
-      req.user = decoded.user; // Ajouter l'utilisateur décodé à la requête pour une utilisation ultérieure
+
+      req.user = decoded.user; // Ajouter l'utilisateur décodé pour une utilisation ultérieure
       next();
     } catch (err) {
+      console.error('Token verification failed:', err.message);
       return res.status(401).json({ message: 'Token invalide ou expiré' });
     }
-  };
+};
   
   
   
@@ -101,6 +113,21 @@ app.post('/api/register', verifyTokenAndRole('Admin'), async (req, res) => {
       res.status(500).send('Server Error');
     }
   });
+
+  app.post('/api/AddClients', verifyTokenAndRole('Admin'), async (req, res) => {
+    // Route protégée
+    const { name, email, tel, status } = req.body;
+    try {
+      const newClient = await pool.query(
+        'INSERT INTO clients (name, email, tel, statut) VALUES ($1, $2, $3, $4) RETURNING *',
+        [name.trim(), email.trim(), tel.trim(), status.trim()]
+      );
+      res.json(newClient.rows[0]);
+    } catch (err) {
+      console.error('Error during registration:', err.message);
+      res.status(500).send('Server Error');
+    }
+  });
   
   // Exemple de route protégée
   app.use('/api/protected', verifyTokenAndRole('Admin'), (req, res) => {
@@ -108,38 +135,50 @@ app.post('/api/register', verifyTokenAndRole('Admin'), async (req, res) => {
   });
   
   
-
-
-
 // CONNEXION
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     console.log('Received data:', { username, password }); // Log the received data
+
     try {
         const user = await pool.query('SELECT * FROM users WHERE username = $1', [username.trim()]);
         if (user.rows.length === 0) {
             return res.status(400).json({ msg: 'Username Incorrect' });
         }
         console.log('User found:', user.rows[0]); // Log the user found
+
         const isMatch = await bcrypt.compare(password, user.rows[0].password.trim());
         console.log('Password match:', isMatch); // Log the result of password comparison
         if (!isMatch) {
             return res.status(400).json({ msg: 'Mot De Passe incorrect' });
         }
+
+        // Créer le payload pour le token
         const payload = {
             user: {
                 id: user.rows[0].id,
                 role: user.rows[0].role.trim()
             }
         };
+
+        // Générer le token JWT
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-        console.log('Sending response:', { token, role: user.rows[0].role.trim() }); // Log the response
-        res.json({ token, role: user.rows[0].role.trim() });       
+
+        // Envoyer le token comme cookie sécurisé
+        res
+            .cookie('token', token, {
+                httpOnly: true, // Le cookie ne peut pas être accédé via JavaScript
+                secure: process.env.NODE_ENV === 'production', // Activé uniquement en HTTPS en production
+                // sameSite: 'Strict', // Empêche l'envoi des cookies vers d'autres domaines
+                // maxAge: 3600000, // Expiration : 1 heure (en ms)
+            })
+            .json({ role: user.rows[0].role.trim() }); // Retourner le rôle ou toute autre info utile au frontend
     } catch (err) {
         console.error('Error during login:', err.message);
         res.status(500).send('Server Error');
     }
 });
+
 
 
 app.get('/api/check-admin', verifyTokenAndRole('Admin'), (req, res) => {
@@ -152,16 +191,24 @@ app.get('/api/check-admin', verifyTokenAndRole('Admin'), (req, res) => {
 const blacklist = new Set(); // Initialisation d'une liste noire en mémoire (à adapter si vous souhaitez une persistance)
 
 app.post('/api/logout', (req, res) => {
-    console.log("LogOut");
-    const token = req.headers['authorization']?.split(' ')[1]; // Récupérer le token depuis les headers
-    console.log("token : " + token);
-    if (token) {
-        blacklist.add(token); // Ajouter le token à la liste noire
-        res.status(200).send({ message: 'Déconnexion réussie' });
-    } else {
-        res.status(400).send({ message: 'Aucun token fourni' });
-    }
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+    });
+    res.status(200).json({ message: 'Déconnexion réussie' });
 });
+
+app.get('/api/clients', async (req, res) => {
+    console.log("Client");
+    try {
+        const client = await pool.query('SELECT * FROM clients');
+        res.json(client.rows);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+})
 
 
 
@@ -298,11 +345,22 @@ app.post('/api/sales', async (req, res) => {
 });
 
 // Visualiser la somme des ventes
-app.get('/api/sales', async (req, res) => {
+app.get('/api/sales/stats', async (req, res) => {
     try {
         const sales = await pool.query('SELECT SUM(total) AS total FROM sales');
         console.log(sales.rows.total_sales); // Ajoute cette ligne pour voir ce qui est renvoyé
         res.json(sales.rows[0].total);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+app.get('/api/sales', async (req, res) => {
+    try {
+        const sales = await pool.query('SELECT * FROM sales');
+        console.log(sales.rows); // Ajoute cette ligne pour voir ce qui est renvoyé
+        res.json(sales.rows[0]);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

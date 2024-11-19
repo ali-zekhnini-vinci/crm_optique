@@ -25,7 +25,7 @@ const Stocks = () => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/stocks', formData);
+      const res = await axios.post('http://localhost:5000/api/stocks', formData);
       setStocks([...stocks, res.data]);
     } catch (err) {
       console.error(err.response.data);
@@ -34,7 +34,7 @@ const Stocks = () => {
 
   const deleteStock = async id => {
     try {
-      await axios.delete(`/api/stocks/${id}`);
+      await axios.delete(`http://localhost:5000/api/stocks${id}`);
       setStocks(stocks.filter(stock => stock.id !== id));
     } catch (err) {
       console.error(err.response.data);

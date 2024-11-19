@@ -20,13 +20,13 @@ const Login = () => {
       const res = await axios.post('http://localhost:5000/api/login', formData, {
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        withCredentials: true // Assure l'envoi des cookies
       });
       console.log('API response:', res.data); // Log the API response
-      const { token, role } = res.data;
+      const { role } = res.data;
       console.log('Role:', role); // Log the role
-      localStorage.setItem('token', token); // Store the token in localStorage
-
+      
       // Redirect based on role
       if (role === 'Admin') {
         navigate('/dashboard');

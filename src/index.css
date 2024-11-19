@@ -11,3 +11,89 @@
 body {
     font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
+
+/* Applique à tous les éléments avec des barres de défilement */
+::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre verticale */
+    height: 8px; /* Hauteur de la barre horizontale */
+  }
+  
+  /* La piste de la barre de défilement */
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Fond transparent ou couleur discrète */
+    border-radius: 10px;
+  }
+  
+  /* La partie mobile de la barre de défilement */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4); /* Couleur foncée et transparente */
+    border-radius: 10px; /* Bord arrondi */
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* Change la couleur de la barre au survol */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.6); /* Accentuation au survol */
+  }
+  
+  /* Pour Firefox */
+  .scroll-container {
+    scrollbar-width: thin; /* Barre fine */
+    scrollbar-color: rgba(0, 0, 0, 0.4) transparent; /* Couleurs personnalisées */
+  }
+  
+
+  /* Global.css */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    margin-left: 16rem;
+    margin-bottom: 2rem;
+  }
+  
+  .layout {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    background: #192841; /* Bleu sombre */
+    color: white;
+    width: 250px;
+    padding: 20px;
+  }
+  
+  .sidebar h1 {
+    color: #f97316; /* Orange */
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar a {
+    color: white;
+    display: block;
+    margin: 10px 0;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  .sidebar a:hover {
+    color: #f97316;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .card-data {
+    font-size: 1.5rem;
+    margin-top: 10px;
+  }
+  
