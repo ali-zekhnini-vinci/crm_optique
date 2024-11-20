@@ -25,7 +25,7 @@ const Expenses = () => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/expenses', formData);
+      const res = await axios.post('http://localhost:5000/api/expenses/addExpenses', formData);
       setExpenses([...expenses, res.data]);
     } catch (err) {
       console.error(err.response.data);

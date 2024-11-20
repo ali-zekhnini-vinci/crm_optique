@@ -42,7 +42,7 @@ const Client = () => {
 
   const handleAddClient = async (values) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/AddClients', values);
+      const res = await axios.post('http://localhost:5000/api/clients/AddClients', values);
       setClients([...clients, res.data]);
       setFilteredClients([...clients, res.data]);
       message.success('Client ajouté avec succès !');

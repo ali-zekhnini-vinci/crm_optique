@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   React.useEffect(() => {
     const checkAuthorization = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/check-admin', {
+        const res = await axios.get('http://localhost:5000/api/users/check-admin', {
           withCredentials: true
         });
         if (res.data.role.trim() === requiredRole) {

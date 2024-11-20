@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Register from './components/Register';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import Frames from './components/Frames';
-import Stocks from './components/Stocks';
-import Sales from './components/Sales';
-import Expenses from './components/Expenses';
-import Home from './components/Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Frames from './pages/Frames';
+import Stocks from './pages/Stocks';
+import Sales from './pages/Sales';
+import Expenses from './pages/Expenses';
+import Home from './pages/Home';
 import SideBar from './components/SideBar';
-import Client from './components/Client';
+import Client from './pages/Client';
 import ProtectedRoute from './components/ProtectedRoutes';
 
 function App() {
@@ -16,10 +16,10 @@ function App() {
     <Router>
       <SideBar />
       <Routes>
-        <Route path="/home" element={<Home />} />
         <Route path="/register" element={<ProtectedRoute requiredRole="Admin"><Register /></ProtectedRoute>} />
-        <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedRoute requiredRole="Admin"><Dashboard /></ProtectedRoute>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/frames" element={<Frames />} />
         <Route path="/stocks" element={<Stocks />} />
         <Route path="/sales" element={<Sales />} />

@@ -1,23 +1,24 @@
-POST http://localhost:5000/api/register
+POST http://localhost:5000/api/users/register
 Content-Type: application/json
 
 {
-  "username": "ali@student.vinci.be",
+  "username": "jesais@student.vinci.be",
   "password": "AZERTYaze12/",
   "role": "Admin"
 }
 
 ###
-POST http://localhost:5000/api/login
+GET http://localhost:5000/api/users/check-admin
+
+
+###
+POST http://localhost:5000/api/users/login
 Content-Type: application/json
 
 {
     "username": "ali@student.vinci.be",
     "password": "AZERTYaze12/"
 }
-
-###
-GET http://localhost:5000/api/clients
 
 ###
 POST http://localhost:5000/api/frames 

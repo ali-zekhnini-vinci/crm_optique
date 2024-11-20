@@ -15,7 +15,7 @@ import {
   ComputerDesktopIcon
 } from '@heroicons/react/24/outline';
 
-const initialNavigation  = [
+const initialNavigation = [
   { name: 'Accueil', href: '/', icon: HomeIcon, current: false },
   { name: 'Inscription', href: '/register', icon: UserPlusIcon, current: false },
   { name: 'Client', href: '/client', icon: UserGroupIcon, current: false },
@@ -24,35 +24,33 @@ const initialNavigation  = [
   { name: 'Montures', href: '/frames', icon: CubeIcon, current: false },
   { name: 'Stocks', href: '/stocks', icon: ArchiveBoxIcon, current: false },
   { name: 'Dashboard', href: '/dashboard', icon: ComputerDesktopIcon, current: false },
-];  
+];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const Sidebar = () => {
+  // Fonction pour lire les cookies
+  const getCookieValue = (name) => {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    return match ? decodeURIComponent(match[2]) : null;
+  };
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [navigation, setNavigation] = useState(initialNavigation);
-  const isLoggedIn = !!localStorage.getItem('token'); // Vérifie si le token est présent
+  const isLoggedIn = getCookieValue('role'); // Vérifie si le token est présent
   const navigate = useNavigate();
   const location = useLocation();
 
+  
+
   useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          return;
-        }
-        const res = await axios.get('http://localhost:5000/api/check-admin', {
-          withCredentials: true // Assure l'envoi des cookies
-        });
-        if (res.data.role.trim() === 'Admin') {
-          setIsAdmin(true);
-        }
-      } catch (err) {
-        console.error('Erreur lors de la vérification du rôle:', err.response ? err.response.data : err.message);
+    const checkAdmin = () => {
+      const role = getCookieValue('role');
+      if (role && role.trim() === 'Admin') {
+        setIsAdmin(true);
       }
     };
 
@@ -72,10 +70,10 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        'http://localhost:5000/api/logout',
+        'http://localhost:5000/api/users/logout',
         {},
         {
-          withCredentials: true // Assure l'envoi des cookies
+          withCredentials: true, // Assure l'envoi des cookies
         }
       );
       localStorage.removeItem('token'); // Supprimer le token du localStorage
@@ -90,9 +88,8 @@ const Sidebar = () => {
     <div className="flex">
       {/* Sidebar */}
       <div
-        className={`${
-          isSidebarOpen ? 'w-64' : 'w-16'
-        } bg-gray-800 fixed inset-y-0 left-0 flex flex-col transition-all duration-300`}
+        className={`${isSidebarOpen ? 'w-64' : 'w-16'
+          } bg-gray-800 fixed inset-y-0 left-0 flex flex-col transition-all duration-300` }
       >
         <div className="flex items-center justify-between h-16 px-4">
           <img
@@ -115,7 +112,8 @@ const Sidebar = () => {
           {navigation.map(
             (item) =>
               (item.name !== 'Inscription' || isAdmin) &&
-              (item.name !== 'Connexion' || !isLoggedIn) && (
+              (item.name !== 'Connexion' || !isLoggedIn) && 
+              (item.name !== 'Dashboard' || isAdmin) &&(
                 <Link
                   key={item.name}
                   to={item.href}
@@ -136,7 +134,7 @@ const Sidebar = () => {
             className="text-gray-300 hover:bg-gray-700 hover:text-white flex items-center px-2 py-2 text-sm font-medium rounded-md w-full"
           >
             <ArrowLeftOnRectangleIcon className="h-6 w-6 mr-3" />
-            {isSidebarOpen && 'Déconnexion'}
+            {(isSidebarOpen && isLoggedIn ) ? 'Déconnexion' : 'Connexion'}
           </button>
         </div>
       </div>
@@ -152,4 +150,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar ;
+export default Sidebar;
