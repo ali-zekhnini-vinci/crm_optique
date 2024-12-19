@@ -6,9 +6,11 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 // Visualiser tous les stocks
 router.get('/', async (req, res) => {
+    const opticianId = req.cookies.optician_id;
+    console.log('id:', opticianId);
     try {
-        const stocks = await pool.query('SELECT * FROM stocks');
-        res.json(stocks.rows);
+        const frames = await pool.query('SELECT * FROM frames WHERE optician_id = $1', [opticianId]);
+        res.json(frames.rows);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

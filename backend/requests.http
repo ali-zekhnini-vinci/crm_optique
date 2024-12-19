@@ -8,7 +8,16 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/users/check-admin
+POST http://localhost:5000/api/frames/AddFrames
+Content-Type: application/json
+
+{
+  "brand": "ibd",
+  "model": "jhdbjeh",
+  "price": 12,
+  "stock": 12,
+  "url": "data:image/png;base64,iVBORw...=="
+}
 
 
 ###
@@ -31,3 +40,86 @@ Content-Type: application/json
     "stock": "121234567",
     "url": "https://img.edel-optics.be/eoProductsGlassesSunglasses/640/nobg/Porsche-Design-P8692-B.jpg"
 }
+
+###
+GET http://localhost:5000/api/sales/by-category
+
+### 
+GET http://localhost:5000/api/repairs
+
+###
+GET http://localhost:5000/api/lemon/products
+
+### 
+POST http://localhost:5000/webhook
+Content-Type: application/json
+Stripe-Signature: t=timestamp,v1=signature_hash
+
+{
+  "id": "evt_1JXXYDJzTKJxxO6LAxO1S2d3",
+  "object": "event",
+  "api_version": "2020-08-27",
+  "created": 1605288437,
+  "data": {
+    "object": {
+      "id": "cs_test_a1b2c3d4e5f6g7h8i9j0k",
+      "object": "checkout.session",
+      "payment_status": "paid",
+      "customer_email": "client@example.com",
+      "amount_total": 5000,
+      "currency": "eur"
+    }
+  },
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_123456789",
+    "idempotency_key": null
+  },
+  "type": "checkout.session.completed"
+}
+
+
+### 
+GET http://localhost:5000/api/users/widgets
+
+###
+POST http://localhost:5000/api/clients/addClients
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+33123456789",
+    "birth_date": "1990-01-01",
+    "address": "123 Rue de la Paix",
+    "city": "Paris",
+    "postal_code": "75001"
+}
+###
+POST http://localhost:5000/api/clients/1/prescriptions 
+Content-Type: application/json
+
+{
+        "user_id": 2,
+        "date": ,
+        "right_sphere":,
+        "right_cylinder":,
+        "right_axis":,
+        "left_sphere":,
+        "left_cylinder":,
+        "left_axis":,
+        "add_power":,
+        "notes":,
+}
+
+###
+POST http://localhost:5000/api/users/verify-code
+Content-Type: application/json
+
+{
+    "userId": 2,
+    "code": "634246"
+}
+
+

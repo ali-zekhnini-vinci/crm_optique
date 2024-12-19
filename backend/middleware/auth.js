@@ -20,4 +20,16 @@ const verifyTokenAndRole = (requiredRole) => (req, res, next) => {
     }
 };
 
-module.exports = { verifyTokenAndRole };
+
+const authMiddleware = (req, res, next) => {
+    const opticianId = req.cookies.optician_id;
+    
+    if (!opticianId) {
+      return res.status(401).json({ error: 'Optician ID not found in cookies' });
+    }
+  
+    req.opticianId = opticianId;
+    next();
+  };
+  
+module.exports = { verifyTokenAndRole, authMiddleware };

@@ -11,7 +11,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         const res = await axios.get('http://localhost:5000/api/users/check-admin', {
           withCredentials: true
         });
-        if (res.data.role.trim() === requiredRole) {
+        
+        // Vérification si le rôle est dans la liste des rôles autorisés
+        if (requiredRole.includes(res.data.role.trim())) {
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
@@ -28,7 +30,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <div>Loading...</div>;
   }
 
-  return isAuthorized ? children : <Navigate to="/login" />;
+  return isAuthorized ? children : null;
 };
 
 export default ProtectedRoute;
