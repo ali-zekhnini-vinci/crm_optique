@@ -11,7 +11,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { color } from 'framer-motion';
 import TextArea from 'antd/es/input/TextArea';
 import { EyeOutlined, MailOutlined, TagOutlined } from '@ant-design/icons';
-const stripePromise = loadStripe('pk_test_51QTTmrQMnVYA3nqwLTikEVS4NpfUovAJouXs5A42zo1ZKVt8NN0YpCxN1NR7WxrnKTrpdFB8PYxUjmNUgUysfhkp00eWO30LqU');
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const { Content } = Layout;
 const { TabPane } = Tabs;

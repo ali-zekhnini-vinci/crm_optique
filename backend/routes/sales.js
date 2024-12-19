@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 
 const router = express.Router();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const stripe = require('stripe')('sk_test_51QTTmrQMnVYA3nqw3hUxYPgyOeyCLzKqi6uUGelrLYFqnZbGGrb4zyobc8P8JBH906h0xPKAKNjh4nmgDl8RoChb00AW5HetkD');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 // Récupérer toutes les ventes
